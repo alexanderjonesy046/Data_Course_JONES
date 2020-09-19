@@ -21,6 +21,10 @@
 # Vectors are 1-dimensional series of values in some order
 1:10 # ':' only works for integers
 letters # built-in pre-made vector of a - z
+class(1:10)
+class(1)
+class(1L)
+class(333L)
 
 
 
@@ -33,6 +37,8 @@ vector2 / 2
 vector1*vector2
 
 vector3 + 1 # can't add 1 to "a"
+
+vector2+5
 
 
 
@@ -59,13 +65,19 @@ head(dat)
 # You can access specific columns of a "data frame" by name using '$'
 dat$Species
 dat$Sepal.Length
+class(dat)
+class(dat$Species)
 
 # You can also use square brackets to get specific 1-D or 2-D subsets of a data frame (rows and/or columns)
 dat[1,1] # [Rows, Columns]
 dat[1:3,5]
-
+letters[5]
+letters[c(5,6)]
+letters[1:10]
+let <- c(1,3,5,7,9)
+letters[let]
 # Plotting ####
-
+pwd
 # Can make a quick plot....just give vectors for x and y axes
 plot(x=dat$Petal.Length, y=dat$Sepal.Length)
 plot(x=dat$Species, y=dat$Sepal.Length)
@@ -143,8 +155,8 @@ df1 # look at it...note column names are what we gave it.
 
 # Write your new object "dat3" to a file named "LASTNAME_first_file.csv" in your PERSONAL git repository
 
-
-
+getwd()
+setwd(Data_Course_JONES)
 
 ### for-loops in R ####
 
@@ -168,16 +180,18 @@ for(i in levels(dat$Species)){
 # YOUR REMAINING HOMEWORK ASSIGNMENT (Fill in with code) ####
 
 # 1.  Make a scatterplot of Sepal.Length vs Sepal.Width. See if you can get the points to be colored by "Species"
-
+plot(x=dat$Sepal.Length, y=dat$Sepal.Width, main = "Sepal Length V Sepal Width", xlab = "Sepal Length", ylab = "Sepal Width")
 
 # 2.  Write the code to save it (with meaningful labels) as a jpeg file
-
-
+jpeg("./Assignments/Assignment_3/Sepal Length and Width.jpeg")
+plot(x=dat$Sepal.Length, y=dat$Sepal.Width, main = "Sepal Length V Sepal Width", xlab = "Sepal Length", ylab = "Sepal Width")
+dev.off()
 # 3.  Subset the Iris data set to only include rows from the setosa and virginica Species
-
+setosa_virginica <- iris$Species %in% c("setosa", "virginica")
+iris[setosa_virginica,]
 
 # 4.  Write code to save this new subset as a .csv file called setosa_and_virginica.csv
-
+write.csv(setosa_virginica, "setosa_and_virginica.csv" )
 
 # 5.  Upload this R script (with all answers filled in and tasks completed) to canvas and GitHub
       # I should be able to run your R script and get all the plots created and saved, etc.
