@@ -65,7 +65,7 @@ view(GATHER2)
 
 
 #GGPLOT FIG 2####
-ggplot(GATHER2, aes(x = Year, y = Mortality.Rate, color = Continent)) +
+FIG_2 <- ggplot(GATHER2, aes(x = Year, y = Mortality.Rate, color = Continent)) +
   geom_point(size = 2.5) + theme_minimal() +
   labs(y = "MortalityRate")
   
@@ -84,7 +84,7 @@ view(MEAN)
 
 #GGPLOT Fig 3####
 
-ggplot(MEAN, aes(x = Year, y = mean, color = Continent)) +
+FIG_3 <- ggplot(MEAN, aes(x = Year, y = mean, color = Continent)) +
   geom_point() +geom_line(size = 2) +
   labs(y = "Mean Mortality Rate (deaths per 1000 live births)") +theme_minimal()
 
@@ -105,16 +105,30 @@ view(PROP)
 sum(PROP$Mortality.Rate)
 #GGPLOT FIG 4####
 
-ggplot(PROP, aes(x = Year, y = Mean)) + geom_point(color = "blue") + 
+FIG_4 <- ggplot(PROP, aes(x = Year, y = Mean)) + geom_point(color = "blue") + 
   facet_wrap( ~Region) +theme_minimal()
 
-#SAVE AS JPEG
+#SAVE AS JPEG####
+
+jpeg("JONES_Fig_1.jpg")
+FIG_1
+dev.off()
 
 
+jpeg("JONES_Fig_2.jpg")
+FIG_2
+dev.off()
 
 
+jpeg("JONES_Fig_3.jpg")
+FIG_3
+dev.off()
 
 
-
-
-
+jpeg("JONES_Fig_4.jpg")
+FIG_4
+dev.off()
+#Hopefully All of this works okay, I had a few problems
+#with a couple of the graphs figuring out exactly how you did the ratios and themes but I 
+#Believe all the data is there
+#and at the very least I have an actual script to submit this time around.
