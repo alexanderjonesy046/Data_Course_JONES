@@ -42,8 +42,13 @@ CLEAN$State <- as.factor(CLEAN$State)
 GGCLEAN <- CLEAN %>% filter(Tier!="VIIB")
 
 #Visualize Salary####
+ggplot(GGCLEAN, aes(x=Rank, y=Salary, fill=Rank)) + geom_boxplot() +
+  facet_wrap(. ~Tier) +theme_minimal() +
+  theme(axis.text.x = element_text(angle = 65))
+
 fig1 <-ggplot(GGCLEAN, aes(x=Rank, y=Salary, fill=Rank)) + geom_boxplot() +
-  facet_wrap(. ~Tier) +theme_minimal()
+  facet_wrap(. ~Tier) +theme_minimal() +
+  theme(axis.text.x = element_text(angle = 65))
 #Export
 jpeg("JONES_Fig_1.jpg")
 fig1
@@ -96,8 +101,8 @@ model <- CHEM %>% glm(formula = math~ ChemicalID,
                       family = gaussian())
 summary(model)
 
-tidy(model, subset(p<0.05))
-?tidy
+tidy(model)
+
 
 
 
