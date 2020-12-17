@@ -1,0 +1,2 @@
+"max_automatic" "max_original" "max_200"
+"1" 335 335 175
