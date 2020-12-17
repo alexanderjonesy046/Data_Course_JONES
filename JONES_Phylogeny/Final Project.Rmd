@@ -1,0 +1,164 @@
+---
+title: "How To Build A Simple Phylogenetic Tree Using R"
+author: "Alexander Jones"
+date: "12/8/2020"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+library(tidyr)
+library(tidyverse)
+library(phangorn)
+library(BiocManager)
+library(ggtree)
+library(msa)
+library(purrr)
+library(ShortRead)
+library(knitr)
+library(ggmsa)
+library(prettydoc)
+```
+
+
+
+
+# Phylogenetic Tree Building
+**Full Disclosure this is a guide written by a new R user, and should not be regarded as an expert level introduction. This quick instructional page is little more than the proverbial blind leading the blind**  
+
+## What Is a Phylogenetic Tree
+
+A Phylogenetic Tree is a tool for visualizing how closely related different species are by using branches to show relationships based upon genetic similarities and differences. 
+
+## Building a Phylogenetic Tree using R
+The first step in building a phylogenetic tree in R is to install the necessary packages, 
+the packages I used to make the phylogeny and this markdown are included below.  
+
+```{r, eval=FALSE}
+library(tidyr)
+library(tidyverse)
+library(phangorn)
+library(BiocManager)
+library(ggtree)
+library(msa)
+library(purrr)
+library(ShortRead)
+library(knitr)
+library(prettydoc)
+library(ggmsa)
+```
+
+It is important to note that several of the packages I used are not supported by the CRAN library, and are located on Bioconductor. To install these packages use the BiocManager package from CRAN.  
+**Below is the string of code I used to install the packages**
+
+```{r, eval=FALSE}
+library(BiocManager)
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("msa")
+BiocManager::install("ggtree")
+BiocManager::install("ShortRead")
+BiocManager::install("ggmsa")
+```
+**More information about BioConductor packages as well as more complete Instructions for installing Bioconductor packages are located [HERE](https://cran.r-project.org/web/packages/BiocManager/vignettes/BiocManager.html)**
+
+
+
+
+
+### Finding Data to build a phylogenetic tree
+Before you can find the data for building your phylogenetic tree you need to identify species which you are interested in and you need to identify a gene which can connect them.  
+To build my phylogeny I used the rs18 gene of 43 different species all belonging to the Poaceae family, or the grass family.  
+I selected the rs18 gene because of its ubiquity and availability, but also because it has minor variations across species.  
+I selected the Poaceae family because of the many phenotypic differences among species, and because many of the species have become agricultural staples world wide.  
+**Below is the list of grass species I used to build the tree.**
+```{r, include=FALSE}
+GRASS_SPECIES <- read.csv("Grass.csv")
+```
+
+```{r}
+GRASS_SPECIES
+
+
+```
+### Collecting Genetic Data  
+
+Using the [NCBI Website](https://www.ncbi.nlm.nih.gov/) I found the sequences for the rs18 gene for all of the species of interest. I then downloaded a strung together version of the species in the .fasta format  
+### Reading in the Data  
+After downloading the .fasta file we read it into r using the readDNAStringSet function. 
+
+```{r, warning=FALSE}
+BIG <- readDNAStringSet("Big.fasta", format = "fasta")
+
+
+```
+
+
+
+
+
+### Multiple Sequence Alignment
+After selecting my species and gene I ran an MSA, or multiple sequence alignment to align the genetic code as closely as possible, using this simple command. 
+
+```{r, warning=FALSE}
+alignment <- msa(BIG)
+```
+
+Using the [ggmsa package](https://cran.r-project.org/web/packages/ggmsa/vignettes/ggmsa.html) I included a visual for a section of the MSA.  
+**Below is a print out of the msa for nucleic acid 280 to 360.**  
+
+```{r, warning=FALSE}
+ggmsa(BIG, start = 280, end = 360, color = "Shapely_NT")
+```
+
+*note:the phylogeny was built using a full msa, this is just a section of the msa for visualization*
+
+
+Once aligned we are able to test the evolutionary relationship and homology of the species, using a series of distance tests.  
+  
+
+Once the alignment is completed I used a string of code to change the formatting of my stringset for the other tests and manipulations. This string of code was created and provided by my professor, [Dr. Geoffrey Zahn](http://geoffreyzahn.com/about-me/).
+```{r}
+alignment@unmasked@ranges@NAMES <- 
+  paste(alignment@unmasked@ranges@NAMES %>% str_split(pattern = " ") %>% map_chr(2),
+        alignment@unmasked@ranges@NAMES %>% str_split(pattern = " ") %>% map_chr(3),
+        sep = "_")
+```
+
+### Phylogenetic Tree Visualization  
+
+To build the phylogenetic tree we cant simply align the sequences, we must also build the data into the appropriate format and analyze the distance of each species to effectively build our tree  
+**Below is the code used to manipulate the data in this form**
+```{r, warning=FALSE}
+PHY <- as.phyDat(alignment)
+DIST <- dist.ml(PHY)
+tree2 <- pratchet(PHY)
+tree2 <- nnls.phylo(tree2, DIST)
+```
+Once this is completed we can visualize our tree. the simple plot() function can provide a simple tree, but it does not provide any of the aesthetic features that are available using the ggtree package. Which means it is clunky, difficult to read, and more or less completely useless.
+
+```{r include=FALSE}
+tree <- NJ(DIST)
+```
+
+```{r}
+plot(tree)
+```
+
+### Plotting Using GGTREE  
+Using the functions of ggtree we can transform our tree from something that is useless to an intuitive visualization of our data. Using a wide range of manipulations to best demonstrate our date. I chose to use the circular representation as well as the rectangular representation because while the circular shows branching better, it is much less intuitive to read.
+
+```{r}
+ggtree(tree2, layout = "circular", branch.length = "none") +
+  geom_tiplab(size = 3) +xlim(0,33)
+```
+
+```{r}
+ggtree(tree2, layout = "rectangular", branch.length = "none") +
+  geom_tiplab(size = 3) +xlim(0,33)
+```
+
+*These trees are a very simple representation of the powers of ggtree package, with a full list of arguments and functions found [HERE](https://guangchuangyu.github.io/ggtree-book/chapter-ggtree.html)*
+
+
