@@ -84,8 +84,10 @@ GRASS_SPECIES
 ```
 ### Collecting Genetic Data  
 
-Using the [NCBI Website](https://www.ncbi.nlm.nih.gov/) I found the sequences for the rs18 gene for all of the species of interest. I then downloaded a strung together version of the species in the .fasta format  
+Using the [NCBI Website](https://www.ncbi.nlm.nih.gov/) I found the sequences for the rs18 gene for all of the species of interest. I then downloaded a strung together version of the species in the .fasta format 
+
 ### Reading in the Data  
+
 After downloading the .fasta file we read it into r using the readDNAStringSet function. 
 
 ```{r, warning=FALSE}
@@ -147,7 +149,8 @@ plot(tree)
 ```
 
 ### Plotting Using GGTREE  
-Using the functions of ggtree we can transform our tree from something that is useless to an intuitive visualization of our data. Using a wide range of manipulations to best demonstrate our date. I chose to use the circular representation as well as the rectangular representation because while the circular shows branching better, it is much less intuitive to read.
+Using the functions of ggtree we can transform our tree from something that is useless to an intuitive visualization of our data. Using a wide range of manipulations to best demonstrate our date. I chose to use the circular representation as well as the rectangular representation because while the circular shows branching better, it is much less intuitive to read.  
+The red dots on the node points allow us to see the branch points on the tree much easier
 
 ```{r}
 ggtree(tree2, layout = "circular", branch.length = "none") +
@@ -156,7 +159,8 @@ ggtree(tree2, layout = "circular", branch.length = "none") +
 
 ```{r}
 ggtree(tree2, layout = "rectangular", branch.length = "none") +
-  geom_tiplab(size = 3) +xlim(0,33)
+  geom_tiplab(size = 3) +xlim(0,33) + geom_nodepoint(color = "red", ) +
+  labs(title = "Poaceae Family Tree")
 ```
 
 *These trees are a very simple representation of the powers of ggtree package, with a full list of arguments and functions found [HERE](https://guangchuangyu.github.io/ggtree-book/chapter-ggtree.html)*
